@@ -62,20 +62,20 @@ router.post('/', async (req,res)=>{
 
 // UPDATE
 
-router.get('/:id', async (req,res) => {
+router.put('/:id', async (req,res) => {
     const {id} = req.params
     console.log(id)
     const update = req.body;
 
     if(!('name' && 'budget' in update)){
-        res.status(400).json({message:'please provide a name and budget for your account'})
+        res.status(400).json({message:'Please include name and budget'})
     } else {
         try {
             await db('accounts').where({id: id}).update(update);
             res.json(update)
         }
-        catch (err){
-            res.status(500).json({message:'Failed to update account'})
+        catch(err) {
+            res.json(err)
         }
     }
 });
@@ -83,7 +83,17 @@ router.get('/:id', async (req,res) => {
 
 // DELETE
 
-
+router.delete('/:id', async (req,res) =>{
+    const { id } = req.params;
+    try {
+        await db('accounts').where({id: id}).del();
+        res.status(204).json({message:'account removed'})
+        console.log(`Account with ID of ${id} successfully deleted`)
+    }
+    catch(err){
+        res.json(err)
+    }
+})
 
 
 module.exports = router;
